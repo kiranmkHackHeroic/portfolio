@@ -75,17 +75,28 @@ export default function Contact() {
     setIsSubmitting(true)
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      console.log('Form submitted:', data)
-      setIsSubmitted(true)
-      reset()
-      
-      // Reset success state after 3 seconds
-      setTimeout(() => setIsSubmitted(false), 3000)
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        reset()
+        
+        // Reset success state after 3 seconds
+        setTimeout(() => setIsSubmitted(false), 3000)
+      } else {
+        throw new Error(result.error || 'Failed to submit form')
+      }
     } catch (error) {
       console.error('Error submitting form:', error)
+      // In a real app, you'd show an error message to the user
     } finally {
       setIsSubmitting(false)
     }
